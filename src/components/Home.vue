@@ -38,17 +38,7 @@
 
             <div class="row mt-5">
               <div class="col-md-12 text-center">
-                <nav aria-label="Page navigation" class="text-center">
-                  <ul class="pagination">
-                    <li class="page-item  active"><a class="page-link" href="#">&lt;</a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">4</a></li>
-                    <li class="page-item"><a class="page-link" href="#">5</a></li>
-                    <li class="page-item"><a class="page-link" href="#">&gt;</a></li>
-                  </ul>
-                </nav>
+                <v-paginator :options=options :resource_url="resourse_url" @update="updateResource"></v-paginator>
               </div>
             </div>
           </div>
@@ -60,16 +50,28 @@
   </div>
 </template>
 <script>
+  import VuePaginator from 'vuejs-paginator';
   import Slider from './common/Slider.vue';
   import SideBar from './common/SideBar';
   export default{
     data (){
       return {
         resource : {},
-        articles :[]
+        articles :[],
+        resourse_url : 'article/latest',
+         options: {
+            remote_data: 'result.articles.data',
+            remote_current_page: 'result.articles.current_page',
+            remote_last_page: 'result.articles.last_page',
+            remote_next_page_url: 'result.articles.next_page_url',
+            remote_prev_page_url: 'result.articles.prev_page_url',
+            next_button_text: 'Go Next',
+            previous_button_text: 'Go Back'
+          }
         }
     },
     components:{
+      VPaginator: VuePaginator,
       appSlider : Slider,
       appSideBar : SideBar
     },
@@ -77,6 +79,9 @@
         this.fetchArticles();
     },
     methods:{
+      updateResource(data){
+        this.articles=data
+    },
       fetchArticles(){
         this.$http.get('article/latest')
 	    		.then( response =>{

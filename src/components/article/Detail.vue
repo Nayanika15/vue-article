@@ -85,8 +85,7 @@
             <router-link 
               class="a-block sm d-flex align-items-center height-md" 
               :style="{ 'background-image' : 'url(' + related.image + ')'} "
-              v-bind:to="{name:'articleDetail', params:{ slug : related.slug  } }"
-              @click="getArticle">
+              v-bind:to="{name:'articleDetail', params:{ slug : related.slug  } }">
               <div class="text">
                 <div class="post-meta">
                   <span class="category">Lifestyle</span>

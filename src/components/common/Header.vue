@@ -4,10 +4,9 @@
       <div class="container">
         <div class="row">
           <div class="col-9 social">
-            <a href="#"><span class="fa fa-twitter"></span></a>
-            <a href="#"><span class="fa fa-facebook"></span></a>
-            <a href="#"><span class="fa fa-instagram"></span></a>
-            <a href="#"><span class="fa fa-youtube-play"></span></a>
+            <router-link to="login" v-if="!isAuthenticated">Login</router-link>
+            <router-link to="register">Register</router-link>
+            <a @click="loggout" v-if="isAuthenticated"> loggout</a>
           </div>
           <div class="col-3 search-top">
             <!-- <a href="#"><span class="fa fa-search"></span></a> -->
@@ -24,7 +23,7 @@
       <div class="row pt-5">
         <div class="col-12 text-center">
           <a class="absolute-toggle d-block d-md-none" data-toggle="collapse" href="#navbarMenu" role="button" aria-expanded="false" aria-controls="navbarMenu"><span class="burger-lines"></span></a>
-          <h1 class="site-logo"><a href="index.html">Wordify</a></h1>
+          <h1 class="site-logo"><router-link to="/">Wordify</router-link></h1>
         </div>
       </div>
     </div>
@@ -36,40 +35,32 @@
         <div class="collapse navbar-collapse" id="navbarMenu">
           <ul class="navbar-nav mx-auto">
             <li class="nav-item">
-              <a class="nav-link active" href="index.html">Home</a>
+              <a class="nav-link active" to="/">Home</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#">Business</a>
-            </li>
-            <li class="nav-item dropdown">
-              <a class="nav-link dropdown-toggle" href="category.html" id="dropdown04" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Travel</a>
-              <div class="dropdown-menu" aria-labelledby="dropdown04">
-                <a class="dropdown-item" href="category.html">Asia</a>
-                <a class="dropdown-item" href="category.html">Europe</a>
-                <a class="dropdown-item" href="category.html">Dubai</a>
-                <a class="dropdown-item" href="category.html">Africa</a>
-                <a class="dropdown-item" href="category.html">South America</a>
-              </div>
-
-            </li>
-
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown" v-if="categories_count">
               <a class="nav-link dropdown-toggle" href="category.html" id="dropdown05" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Categories</a>
               <div class="dropdown-menu" aria-labelledby="dropdown05">
-                <a class="dropdown-item" href="category.html">Lifestyle</a>
-                <a class="dropdown-item" href="category.html">Food</a>
-                <a class="dropdown-item" href="category.html">Adventure</a>
-                <a class="dropdown-item" href="category.html">Travel</a>
-                <a class="dropdown-item" href="category.html">Business</a>
-              </div>
-
+                <router-link 
+                  class="dropdown-item"
+                  v-for="(category, id) in active_categories" 
+                  :key="id" 
+                  :to="{name:'categoryDetail', params:{ slug : category.slug  } }"> 
+                    {{ category.name}} 
+                  </router-link>
+                </div>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="about.html">About</a>
+              <router-link class="nav-link" to="/contact">Contact Us</router-link>
             </li>
-            <li class="nav-item">
-              <a class="nav-link" href="contact.html">Contact</a>
-            </li>
+             <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle" id="dropdown05" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Admin </a>
+            <div class="dropdown-menu" aria-labelledby="dropdown05">
+              <router-link 
+                  class="dropdown-item" 
+                  :to="{name:'view-category' }"> Category
+              </router-link>         
+            </div>
+          </li>
           </ul>
           
         </div>
@@ -77,3 +68,34 @@
     </nav>
   </div>
 </template>
+<script>
+export default {
+    data (){
+      return {
+        resource : {},
+        active_categories : [],
+        categories_count : 0,
+        isAuthenticated : localStorage.getItem('token')
+        }
+    },
+    created() {
+        this.fetchActiveCategories();
+    },
+    methods:{
+      fetchActiveCategories(){
+        this.$http.get('category/active')
+        .then( response =>{
+          return response.json();
+          })
+        .then(data => {
+            this.active_categories = data;
+            this.categories_count = data.length;         
+        });
+      },
+      loggout(){
+        delete localStorage.token;
+        this.$route.redirect('/');
+    }
+    }
+  }
+</script>

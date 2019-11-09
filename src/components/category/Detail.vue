@@ -11,28 +11,32 @@
             <div class="row mb-5 mt-5">
 
               <div class="col-md-12">
+                <div class="post-entry-horzontal" v-for="(article, id) in articles " :key=id>
+                  <router-link 
+                    class="image  fadeIn " 
+                    v-bind:to="{name:'articleDetail', params:{ slug : article.slug  } }">
 
-                <div class="post-entry-horzontal">
-                  <a href="blog-single.html">
-                    <div class="image element-animate" data-animate-effect="fadeIn" style="background-image: url(images/img_10.jpg);"></div>
+                    <div class="image" data-animate-effect="fadeIn" :style="{ 'background-image' : 'url(' + article.category_image + ')'} "></div>
                     <span class="text">
                       <div class="post-meta">
-                        <span class="author mr-2"><img src="images/person_1.jpg" alt="Colorlib"> Colorlib</span>&bullet;
-                        <span class="mr-2">March 15, 2018 </span> &bullet;
-                        <span class="mr-2">Food</span> &bullet;
-                        <span class="ml-2"><span class="fa fa-comments"></span> 3</span>
+                        <span class="author mr-2"><img src="/src/assets/images/person_1.jpg" :alt="article.added_by"> {{ article.added_by }}</span>&bullet;
+                        <span class="mr-2"> {{ article.date}} </span> &bullet;
+                        <span class="mr-2"> Food </span> &bullet;                      
                       </div>
-                      <h2>There’s a Cool New Way for Men to Wear Socks and Sandals</h2>
+                      <h2> {{ article.title }}</h2>
+                      <p v-html="article.excerpt"></p>
+                     <h5 class="button btn btn-info">Read more</h5>
                     </span>
-                  </a>
+                  </router-link>
                 </div>
                 <!-- END post -->
 
               </div>
             </div>
-            <v-paginator :options="options" :resource_url="resourse_url" @update="fetchCategoryDetail"></v-paginator>
+            <v-paginator :options=options :resource_url="resourse_url" @update="updateResource"></v-paginator>
             
           </div>
+          <appSideBar></appSideBar>
           <!-- END main-content -->
         </div>
       </div>
@@ -40,6 +44,7 @@
 </template>
 <script>
 import VuePaginator from 'vuejs-paginator';
+import SideBar from '../common/SideBar';
 export default {
     data (){
       return {
@@ -47,37 +52,28 @@ export default {
         articles : {},
         resourse_url : 'category/'+this.$route.params.slug,
          options: {
-            remote_data: '',
-            remote_current_page: '',
-            remote_last_page: '',
-            remote_next_page_url: '',
-            remote_prev_page_url: ''
+            remote_data: 'result.articles.data',
+            remote_current_page: 'result.articles.current_page',
+            remote_last_page: 'result.articles.last_page',
+            remote_next_page_url: 'result.articles.next_page_url',
+            remote_prev_page_url: 'result.articles.prev_page_url',
+            next_button_text: 'Go Next',
+            previous_button_text: 'Go Back'
           }
         }
     },
-    created() {
-        this.fetchCategoryDetail();
+    beforeRouteUpdate (to, from, next) {
+      this.resourse_url='category/'+to.params.slug;
+      next();
     },
     methods:{
-      fetchCategoryDetail(data){
-        console.log(data);
-      //  this.$http.get('category/'+this.$route.params.slug)
-      //   .then( response =>{
-      //     return response.json();
-      //     })
-      //   .then(data => {
-      //       const result = data['result'];
-      //       this.articles = result['articles'];
-      //       this.remote_data= this.articles.data,
-      //       this.remote_current_page= this.articles.current_page,
-      //       this.remote_last_page= this.articles.last_page,
-      //       this.remote_next_page_url= this.articles.next_page_url,
-      //       this.remote_prev_page_url= this.articles.prev_page_url
-      //   });
-	    }
+      updateResource(data){
+        this.articles=data
+    }
     },
     components:{
-      VPaginator: VuePaginator
+      VPaginator: VuePaginator,
+      appSideBar : SideBar
     }
   }
 </script>

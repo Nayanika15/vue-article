@@ -1,31 +1,15 @@
-$(".validate-form").validate({
-  rules:{
-    name:{
-      required: true,
-      maxlength: 25,
-      aphabet: true
-    },
-    email:{
-      required: true,
-      email: true,
-    },
-    password:{
-      required: true,
-      minlength: 5,
-    },
-    con:{
-      required: true,
-      minlength: 5,
-    },
-    code:{
-      required: true
-    },
-    password_confirmation:{
-      required: true,
-      minlength: 5,
-    }
-  }
-});
-jQuery.validator.addMethod("aphabet", function(value, element) {
-  return this.optional(element) || /^[a-z]+$/i.test(value);
-}, "Should only include alphabets."); 
+import { configure, extend, localize } from "vee-validate";
+import * as rules from 'vee-validate/dist/rules';
+import en from "vee-validate/dist/locale/en.json";
+
+// Configure passive mode
+configure({ mode: "passive" });
+
+// Install rules
+for (let rule in rules) {
+  // add the rule
+  extend(rule, rules[rule]);
+}
+
+// Install messages
+localize({ en });
