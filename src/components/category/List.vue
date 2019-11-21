@@ -4,70 +4,52 @@
     <div class="container">
         <div class="row mb-4">
             <div class="col-md-6">
-                <h1 class="mb-4">Add Category</h1>
+                <h1 class="mb-4">Add Category
+                  <small>
+                      <router-link :to="{name:'add-category'}" 
+                        :class="'btn btn-primary btn-xs rounded'">Add</router-link>
+                  </small>
+                </h1>
             </div>
         </div>
         <div class="row blog-entries">
-            <div class="col-md-12 col-lg-8 main-content">
-            <div class="row">
-                <ValidationObserver ref="observer" tag="form" @submit.prevent="submit" v-slot="{ errors }">
-                <div class="row">
-                    <div class="col-md-12 form-group">
-                        <label for="Category Name">Category Name</label>
-                        <ValidationProvider name="name" rules="required" v-slot="{ errors }">
-                      <input type="text" id="name" class="form-control" v-model="category.name" >
-                      </ValidationProvider>
-                    </div>
-                </div>
-                <div class="row">
-                <div class="col-md-6 form-group">
-                    <input class="btn btn-primary" type="submit" value="Add">
-                </div>
-                </div>
-                </ValidationObserver>
-            </div>
-        </div>
+          <div class="col-md-12 col-lg-12 main-content">
+            <table v-if="categories.length" class="table">
+              <thead>
+                <td> ID </td>
+                <td> Title </td>
+                <td> Action </td>
+              </thead>
+              <tbody>
+                <tr v-for="(category, id) in categories"
+                :key="id">
+                  <td> {{ category.id}} </td>
+                  <td> {{ category.name}} </td>
+                  <td> <router-link class="btn btn-primary" :to="{ name:'edit-category' , params:{ id: category.id }}"> <i class='fa fa-edit'></i> </router-link> </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
     </div>
   </section>
 </div>
 </template>
 <script>
-import { ValidationProvider, ValidationObserver } from "vee-validate";
-
 export default {
   data(){
     return {
-        category:{
-            name:'',
-        },
-        status: '',
-        submitted: false
-    }
+      categories : []
+  }
   },
-  components:{
-      ValidationProvider,
-      ValidationObserver
-  },
-  methods:{
-    async submit(){
-      const valid = await this.$refs.observer.validate();
-      if (valid) {
-      this.$http.post('category/add', this.category )
-      .then( response =>{
-        return response.json();
-        })
-        .then(data => {
-          alert(response.msg);
-        },
-      ((errors) => {
-      alert("Err", errors[0]);
-      }));
-      }
-      else {
-        return false;
-      }
-    }    
+  created(){
+    this.$http.get('category/list')
+    .then( response => {
+      return response.json();
+          })
+    .then( data =>{
+        this.categories = data['data'];
+      });
   }
     
 }

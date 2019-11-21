@@ -69,11 +69,15 @@ export default {
               this.loginFailed()
               return
             }
-            localStorage.token = result.token
-            this.error = false
-            this.$router.redirect({ name: "dashboard"});
+            localStorage.token = result.token;
+            localStorage.isAdmin = result.isadmin;
+            this.error = false;
+            this.$router.replace({ name:'dashboard' });
+            location.reload();
             })
-            .catch(() => alert('You are not authorised for this action.'));
+            .catch(error => {
+              alert('User authenication failed');
+            });
       }
       else {
         return false;

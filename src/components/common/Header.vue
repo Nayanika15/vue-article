@@ -52,12 +52,16 @@
             <li class="nav-item">
               <router-link class="nav-link" to="/contact">Contact Us</router-link>
             </li>
-             <li class="nav-item dropdown">
+             <li class="nav-item dropdown" v-if="isAuthenticated">
             <a class="nav-link dropdown-toggle" id="dropdown05" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Admin </a>
             <div class="dropdown-menu" aria-labelledby="dropdown05">
               <router-link 
                   class="dropdown-item" 
                   :to="{name:'view-category' }"> Category
+              </router-link>
+              <router-link 
+                  class="dropdown-item" 
+                  :to="{name:'view-articles' }"> Articles
               </router-link>         
             </div>
           </li>
@@ -75,7 +79,8 @@ export default {
         resource : {},
         active_categories : [],
         categories_count : 0,
-        isAuthenticated : localStorage.getItem('token')
+        isAuthenticated : localStorage.getItem('token'),
+        isAdmin : localStorage.getItem('isAdmin')
         }
     },
     created() {
@@ -94,7 +99,9 @@ export default {
       },
       loggout(){
         delete localStorage.token;
-        this.$route.redirect('/');
+        //this.$router.redirect({ name: "Home"});
+        this.$router.replace({ name:'home' });
+        location.reload();
     }
     }
   }

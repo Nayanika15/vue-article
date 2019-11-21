@@ -21,7 +21,8 @@
                       <div class="post-meta">
                         <span class="author mr-2"><img src="/src/assets/images/person_1.jpg" :alt="article.added_by"> {{ article.added_by }}</span>&bullet;
                         <span class="mr-2"> {{ article.date}} </span> &bullet;
-                        <span class="mr-2"> Food </span> &bullet;                      
+                        <span class="mr-2" v-for="(category, id) in article.categories_tagged"
+                        :key="id"> {{ cattegory.name }} </span> &bullet;                      
                       </div>
                       <h2> {{ article.title }}</h2>
                       <p v-html="article.excerpt"></p>
@@ -33,7 +34,7 @@
 
               </div>
             </div>
-            <v-paginator :options=options :resource_url="resourse_url" @update="updateResource"></v-paginator>
+            <v-paginator :options=options :resource_url="resource_url" @update="updateResource"></v-paginator>
             
           </div>
           <appSideBar></appSideBar>
@@ -50,7 +51,7 @@ export default {
       return {
         resource : {},
         articles : {},
-        resourse_url : 'category/'+this.$route.params.slug,
+        resource_url : 'category/'+this.$route.params.slug,
          options: {
             remote_data: 'result.articles.data',
             remote_current_page: 'result.articles.current_page',
@@ -63,7 +64,7 @@ export default {
         }
     },
     beforeRouteUpdate (to, from, next) {
-      this.resourse_url='category/'+to.params.slug;
+      this.resource_url='category/'+to.params.slug;
       next();
     },
     methods:{

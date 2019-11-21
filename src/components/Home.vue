@@ -25,7 +25,7 @@
                   <img :src="article.image" alt="Image placeholder">
                   <div class="blog-content-body">
                     <div class="post-meta">
-                      <span class="author mr-2"><img src="src/assets/images/person_1.jpg" :alt="article.created_by">{{ article.created_by }}</span>&bullet;
+                      <span class="author mr-2"><img src="/src/assets/images/person_1.jpg" :alt="article.created_by">{{ article.created_by }}</span>&bullet;
                       <span class="mr-2">{{ article.created_date }}</span> &bullet;
                       <span class="ml-2"><span class="fa fa-comments"></span> {{ article.comments_count}}</span>
                     </div>

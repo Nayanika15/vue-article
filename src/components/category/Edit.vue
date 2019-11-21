@@ -58,7 +58,7 @@ export default {
     async submit(){
       const valid = await this.$refs.observer.validate();
       if (valid) {
-      this.$http.post('category/add', this.category )
+      this.$http.put('category/update/'+this.$route.params.id, this.category )
       .then( response =>{
             return response.json();
             })
@@ -75,6 +75,15 @@ export default {
         return false;
       }
     }    
+  },
+  created(){
+    this.$http.get('category/edit/' + this.$route.params.id )
+      .then( response => {
+          return response.json();
+      })
+      .then( data => {
+         this.category = data;
+      })
   }
     
 }
