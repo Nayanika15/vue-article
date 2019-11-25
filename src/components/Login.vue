@@ -24,6 +24,7 @@
               </div>
                 <div class="col-md-6 form-group">
                   <input type="submit" value="Login" class="btn btn-primary">
+                  <router-link :to="{ name: 'reset-password'}"> Forgot password</router-link>
                 </div>
               </div>
               <span v-show="errors">

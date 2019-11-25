@@ -1,10 +1,12 @@
 <template>
   <div id="app">
-     <div class="wrap">
-      <appHeader></appHeader>
-      <router-view></router-view>
-      <appFooter></appFooter>
-    </div>
+    <v-app>
+      <div class="wrap">
+        <appHeader></appHeader>
+        <router-view></router-view>
+        <appFooter></appFooter>
+      </div>
+    </v-app>
   </div>
 </template>
 

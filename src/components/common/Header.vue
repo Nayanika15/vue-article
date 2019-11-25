@@ -35,7 +35,7 @@
         <div class="collapse navbar-collapse" id="navbarMenu">
           <ul class="navbar-nav mx-auto">
             <li class="nav-item">
-              <a class="nav-link active" to="/">Home</a>
+              <router-link class="nav-link" to="/">Home</router-link>
             </li>
             <li class="nav-item dropdown" v-if="categories_count">
               <a class="nav-link dropdown-toggle" href="category.html" id="dropdown05" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Categories</a>
@@ -56,13 +56,19 @@
             <a class="nav-link dropdown-toggle" id="dropdown05" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"> Admin </a>
             <div class="dropdown-menu" aria-labelledby="dropdown05">
               <router-link 
+                  v-if="isAdmin"
                   class="dropdown-item" 
-                  :to="{name:'view-category' }"> Category
+                  :to="{ name:'view-category' }"> Category
               </router-link>
               <router-link 
                   class="dropdown-item" 
-                  :to="{name:'view-articles' }"> Articles
-              </router-link>         
+                  :to="{ name:'view-articles' }"> Articles
+              </router-link>
+              <router-link 
+                  v-if="isAdmin"
+                  class="dropdown-item" 
+                  :to="{ name:'view-comments' }"> Comments
+              </router-link>       
             </div>
           </li>
           </ul>

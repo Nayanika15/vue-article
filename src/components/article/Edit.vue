@@ -25,12 +25,16 @@
                 <div class="col-md-12 form-group">
                     <label for="Category Name">Category Name</label>
                     <ValidationProvider name="categories" rules="required" v-slot="{ errors }">
-                      <select v-model="article.categories" class="form-control" multiple>
-                        <option v-for="(category, id) in categories"
-                                :value="category.id"
-                                :key="id">{{ category.name}}</option>
-                      </select>
-                    </ValidationProvider>
+                      <v-select
+                        v-model="article.categories"
+                        :menu-props="{ top: true, offsetY: true }"
+                        :items="categories"
+                        item-text="name"
+                        item-value="id"
+                        label="Select"
+                        autocomplete
+                        multiple></v-select>
+                      </ValidationProvider>
                 </div>
                 <div class="col-md-12 form-group">
                     <label for="details">Details</label>
@@ -83,7 +87,7 @@ export default {
         },
         status: '',
         submitted: false,
-        categories: '',
+        categories: [],
         categories_count:0
     }
   },
@@ -100,13 +104,13 @@ export default {
           })
         .then(data => {
             this.categories = data;
-            this.categories_count = data.length;         
+            this.categories_count = data.length;
         });
     },
     async submit(){
       const valid = await this.$refs.observer.validate();
       if (valid) {
-      this.$http.post('article/add', this.article)
+      this.$http.put('article/update/'+this.$route.params.id, this.article)
       .then( response =>{
             return response.json();
             })
@@ -124,6 +128,7 @@ export default {
               location.reload();
             }
           }
+          // this.$router.replace({ name: result.route });
       })
       }
       else {
@@ -133,6 +138,29 @@ export default {
   },
   created(){
     this.fetchActiveCategories();
+    this.$http.get('article/edit/'+ this.$route.params.id)
+        .then( response => {
+            return response.json();
+        })
+        .then( data => {
+            let error = data.errFlag;
+            if( error == 1)
+            {
+                alert('Article was not found');
+                this.$router.replace({ name:'view-articles' });
+                location.reload();
+            }
+            else if(error == 2)
+            {
+                alert('You are not authorised for this action.');
+                this.$router.replace({ name:'view-articles' });
+                location.reload();
+            }
+            else{
+                this.article = data.result;
+                this.article.categories = data.result.categories_tagged;
+            }
+        });
   }
     
 }

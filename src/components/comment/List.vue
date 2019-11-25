@@ -3,27 +3,22 @@
     <section class="site-section">
     <div class="container">
         <div class="row mb-4">
-            <div class="col-md-6">
-                <h1 class="mb-4">Add Category
-                  <small>
-                      <router-link :to="{name:'add-category'}" 
-                        :class="'btn btn-primary btn-xs rounded'">Add</router-link>
-                  </small>
-                </h1>
-            </div>
         </div>
         <div class="row blog-entries">
           <div class="col-md-12 col-lg-12 main-content">
               <v-data-table
                 :headers="headers"
-                :items="categories"
+                :items="comments"
                 :search="search"
                 loading loading-text="Loading... Please wait"
               >
+              <template v-slot:item.approve_status="{ item }">
+                <span class="text-warning" v-if="item.approve_status == 0"> Unapproved </span>
+                <span class="text-success" v-else-if="item.approve_status == 1"> Approved </span>
+              </template>
               <template v-slot:item.action="{ item }">
-                <router-link class="btn btn-primary" :to="{ name:'edit-category' , params:{ id: item.id }}"> <i class='fa fa-edit'></i> </router-link>
-                <button class="btn btn-danger" @click="deleteCategory(item)">
-                  <i class='fa fa-trash'></i>
+                <button v-if="item.approve_status == 0" class="btn btn-primary" @click="approveComment(item)">
+                  Approve
                 </button>
               </template>
             </v-data-table>
@@ -41,35 +36,39 @@ export default {
       search :'',
       headers: [
           { text: 'Id', value: 'id' },
-          { text: 'Name', value: 'name' },
+          { text: 'Comment', value:'comment'},
+          { text: 'Added on', value:'created_date'},
+          { text: 'Added by', value: 'user_name' },
+          { text: 'Status', value:'approve_status'},
           { text: 'Action', value:'action'}
         ],
-      categories : []
+      comments : []
     }
   },
   methods:{
-  deleteCategory(item){
-      if(confirm('Are you sure you want to delete this Category?'))
+  approveComment(item){
+      if(confirm('Are you sure you want to approve this comment?'))
       {
-        this.$http.get('category/delete/'+ item.id)
+        this.$http.get('comment/approve/'+ item.id)
         .then(response => {
             return response.json();
         })
         .then(data => {
-          let message = data.message;
+          let message = data.msg;
             alert(message);
+            this.$router.replace({ name:'view-comments' });
             location.reload();
         })
       }
     },
   },
   created(){
-    this.$http.get('category/list')
+    this.$http.get('comment/list')
     .then( response => {
       return response.json();
           })
     .then( data =>{
-        this.categories = data['data'];
+        this.comments = data;
       });
   }
     

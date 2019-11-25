@@ -9,6 +9,10 @@ import CKEditor from '@ckeditor/ckeditor5-vue';
 
 import DataTable from 'laravel-vue-datatable';
 
+import Vuetify from 'vuetify'
+import 'vuetify/dist/vuetify.min.css'
+
+Vue.use(Vuetify)
 Vue.use(DataTable);
 
 
@@ -23,7 +27,7 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  if (to.meta.auth) {
+   if (to.meta.auth) {
     if (!localStorage.getItem('token'))
     {
       next('/login')
@@ -49,11 +53,25 @@ router.beforeEach((to, from, next) => {
     }
     return next();
   }
-  else next();
+  else {
+    if(localStorage.getItem('token')){
+      Vue.http.interceptors.push((request, next) => {
+      request.headers.set('Authorization', 'Bearer '+localStorage.token)
+      request.headers.set('Accept', 'application/json')
+      });
+    }
+    next()
+  };
 });
 // Vue.use(DatatableFactory);
 new Vue({
   el: '#app',
   router,
+  vuetify: new Vuetify(
+    {
+      icons: {
+          iconfont: 'mdi', // 'mdi' || 'mdiSvg' || 'md' || 'fa' || 'fa4'
+        }
+    }),
   render: h => h(App)
 }).$mount("#app");

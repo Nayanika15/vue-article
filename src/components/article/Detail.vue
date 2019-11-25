@@ -22,9 +22,9 @@
             </div>
 
 
-            <div class="pt-5" v-if="comments_count">
+            <div class="pt-5" >
               <h3 class="mb-5"> {{ comments_count }} Comments</h3>
-              <ul class="comment-list">
+              <ul class="comment-list" v-if="comments_count">
                 <li class="comment" v-for="(comment, index) in active_comments" :key="index">
                   <div class="vcard">
                     <img :src = "'/src/assets/images/person_1.jpg'" alt="Image placeholder">
@@ -41,29 +41,55 @@
               
               <div class="comment-form-wrap pt-5">
                 <h3 class="mb-5">Leave a comment</h3>
-                <form action="#" class="p-5 bg-light">
-                  <div class="form-group">
-                    <label for="name">Name *</label>
-                    <input type="text" class="form-control" id="name">
+                <ValidationObserver ref="observer" tag="form" @submit.prevent="submit" v-slot="{ errors }">
+              <div class="row" v-if="!isAuthenicated">
+                  <div class="col-md-12 form-group">
+                    <label for="name">Name</label>
+                    <ValidationProvider name="name" rules="required" v-slot="{ errors }">
+                      <input type="text" id="name" class="form-control" v-model="user.name" >
+                      </ValidationProvider>
+                   </div>
+                  <div class="col-md-12 form-group">
+                    <label for="mobile">Mobile</label>                      
+                    <ValidationProvider name="mobile" rules="required|numeric" v-slot="{ errors }" :bails="false">
+                      <div class="input-group">
+                        <input type="text" id="mobile" maxlength="10" class="form-control" v-model="user.mobile">
+                        <button class="btn btn-warning btn-sm input-group-btn" @click="verify" type="button">Send code</button>
+                      </div>
+                    </ValidationProvider><span class="alert-info" v-html="status"></span>
                   </div>
-                  <div class="form-group">
-                    <label for="email">Email *</label>
-                    <input type="email" class="form-control" id="email">
+                  <div class="col-md-12 form-group">
+                    <ValidationProvider name="code" rules="required|min:3" v-slot="{ errors }" :bails="false">
+                    <label for="Verification code">Verification Code</label>
+                    <input class="form-control" name="code" type="text" v-model="user.code">
+                    </ValidationProvider>
                   </div>
-                  <div class="form-group">
-                    <label for="website">Website</label>
-                    <input type="url" class="form-control" id="website">
+                  <div class="col-md-12 form-group">
+                    <ValidationProvider name="email" rules="required|email" v-slot="{ errors }" :bails="false">
+                    <label for="email">Email</label>
+                    <input type="email" id="email" class="form-control" v-model="user.email">
+                    </ValidationProvider>
                   </div>
-
-                  <div class="form-group">
-                    <label for="message">Message</label>
-                    <textarea name="" id="message" cols="30" rows="10" class="form-control"></textarea>
+                </div>
+                <div class="row">
+                  <ValidationProvider name="comment" rules="required" v-slot="{ errors }">
+                  <div class="col-md-12 form-group">
+                    <label for="comment">Comment</label>
+                    <textarea name="comment" id="comment" class="form-control " cols="100" rows="5" v-model="user.comment"></textarea>
                   </div>
-                  <div class="form-group">
-                    <input type="submit" value="Post Comment" class="btn btn-primary">
+                  </ValidationProvider>
+                </div>
+                <div class="row">
+                  <div class="col-md-6 form-group">
+                    <input type="submit" value="Submit" class="btn btn-primary">
                   </div>
-
-                </form>
+                </div>
+                <span v-show="errors">
+                <ul v-for="(error, id) in errors" :key="id">
+                    <li v-for="(err, i) in error" :key="i"> {{ err }} </li>
+                </ul>
+              </span>
+            </ValidationObserver>
               </div>
             </div>
         </div>
@@ -104,19 +130,31 @@
 
 <script>
 import SideBar from '../common/SideBar';
+import { ValidationProvider, ValidationObserver } from "vee-validate";
   export default {
     data (){
       return {
+        isAuthenicated: localStorage.getItem('token'),
         resource : {},
         article : [],
         comments : [],
         comments_count : 0,
         related_articles :[],
-        realted_articles_count : 0
+        realted_articles_count : 0,
+        status:'',
+        user:{
+          name:'',
+          email:'',
+          mobile : '',
+          comment: '',
+          code: ''
+        }
         }
     },
     components:{
-      appSideBar : SideBar
+      appSideBar : SideBar,
+      ValidationProvider,
+      ValidationObserver
     },
     created() {
         this.fetchArticleDetail(this.$route.params.slug);
@@ -139,7 +177,41 @@ import SideBar from '../common/SideBar';
             this.related_articles = result['related_articles'];
             this.realted_articles_count = result['related_articles'].length;          
         });
-	    }
+      },
+      async submit(){
+      const valid = await this.$refs.observer.validate();
+      if (valid) {
+      this.$http.post('comment/add/'+this.article.id, this.user)
+	    		.then( response =>{
+            return response.json();
+          },
+          error => alert(error)
+          )
+          .then(data => {
+            alert(data.msg);
+            location.reload();
+        });	
+      }
+      else {
+        return false;
+      }
+    },
+    verify(){
+      if(this.user.mobile)
+      {
+        this.$http.get('verify-mobile/'+this.user.mobile)
+          .then( response =>{
+          return response.json();
+          })
+        .then(data => {
+            this.status = data.message;      
+        });
+      }
+      else
+      {
+        alert('please enter a valid mobile no');
+      }
+    }
     }
   }
 </script>
