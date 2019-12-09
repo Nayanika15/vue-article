@@ -39,6 +39,16 @@
                     </ValidationProvider>
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-6 form-group">
+                <input type="submit" value="Submit" class="btn btn-primary">
+                </div>
+            </div>
+            <span v-show="errors">
+                <ul v-for="(error, id) in errors" :key="id">
+                    <li v-for="(err, i) in error" :key="i"> {{ err }} </li>
+                </ul>
+              </span>
             </ValidationObserver>
           </div>
 
@@ -59,7 +69,6 @@ export default {
     return {
       user:{
          mobile : '',
-         message: '',
          code: '',
          password: '',
          password_confirmation: ''
@@ -75,17 +84,19 @@ export default {
   },
   methods:{
     async submit(){
+        alert(1);
       const valid = await this.$refs.observer.validate();
       if (valid) {
-      this.$http.post('feedback', this.user)
-	    		.then( response =>{
+      this.$http.post('reset-password', this.user)
+	    	.then( response =>{
             return response.json();
           },
           error => alert(error)
           )
           .then(data => {
-            alert(data.message);
-            this.$router.push({ name: "Home"});
+            alert(data.msg);
+            this.$router.replace({ name: data.route });
+            location.reload();
         });	
       }
       else {

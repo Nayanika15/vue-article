@@ -34,5 +34,6 @@ export const routes =[
 { path : '/category/edit/:id', component: UpdateCategory, name:'edit-category', meta: { auth: true }},
 { path : '/article/edit/:id', component: EditArticle, name:'edit-article', meta: { auth: true }},
 { path : 'comments/list', component:ListComments, name:'view-comments'},
-{ path : 'password-reset', component:ForgotPassword, name:'reset-password', meta:{guest:true}}
+{ path : 'password-reset', component:ForgotPassword, name:'reset-password', meta:{guest:true}},
+{ path: '/auth/callback/:provider', component: { template: '<div class="auth-component"></div>'} },
 ];

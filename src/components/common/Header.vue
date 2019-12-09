@@ -7,13 +7,7 @@
             <router-link to="login" v-if="!isAuthenticated">Login</router-link>
             <router-link to="register">Register</router-link>
             <a @click="loggout" v-if="isAuthenticated"> loggout</a>
-          </div>
-          <div class="col-3 search-top">
-            <!-- <a href="#"><span class="fa fa-search"></span></a> -->
-            <form action="#" class="search-top-form">
-              <span class="icon fa fa-search"></span>
-              <input type="text" id="s" placeholder="Type keyword to search...">
-            </form>
+            <button v-on:click="AuthProvider('google')" v-if="!isAuthenticated"><span class="fa fa-google"></span></button>
           </div>
         </div>
       </div>
@@ -108,7 +102,30 @@ export default {
         //this.$router.redirect({ name: "Home"});
         this.$router.replace({ name:'home' });
         location.reload();
-    }
+    },
+    AuthProvider(provider) {
+      var self = this
+      this.$auth.authenticate(provider)
+        .then( response =>{
+           this.SocialLogin(response);
+          })
+        .catch(err => {
+            console.log({err:err})
+        })
+    },
+    SocialLogin(response){
+ 
+      this.$http.post('sociallogin/google',response)
+        .then( response =>{
+          console.log(response);
+          })
+        // .then(data => {
+        //     console.log(data);         
+        // })
+        .catch(err => {
+          console.log({err:err})
+      })
     }
   }
+}
 </script>

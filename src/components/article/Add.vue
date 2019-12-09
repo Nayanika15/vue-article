@@ -35,7 +35,7 @@
                 <div class="col-md-12 form-group">
                     <label for="details">Details</label>
                     <ValidationProvider name="details" rules="required" v-slot="{ errors }">
-                      <editor :editor="editor" v-model="article.details"></editor>
+                      <editor-content :editor="editor" v-model="article.details"/>
                     </ValidationProvider>
                 </div>
                 <div class="col-md-12 form-group">
@@ -66,13 +66,11 @@
 
 <script>
 import { ValidationProvider, ValidationObserver } from "vee-validate";
-import CKEditor from '@ckeditor/ckeditor5-vue';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { Editor, EditorContent } from 'tiptap';
 
 export default {
   data(){
     return {
-        editor: ClassicEditor,
         article:{
             title:'',
             details:'',
@@ -90,7 +88,7 @@ export default {
   components:{
       ValidationProvider,
       ValidationObserver,
-      editor: CKEditor.component
+      EditorContent,
   },
   methods:{
     fetchActiveCategories(){
@@ -133,6 +131,9 @@ export default {
   },
   created(){
     this.fetchActiveCategories();
+  },
+  mounted() {
+    
   }
     
 }

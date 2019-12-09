@@ -70,13 +70,10 @@
 
 <script>
 import { ValidationProvider, ValidationObserver } from "vee-validate";
-import CKEditor from '@ckeditor/ckeditor5-vue';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 export default {
   data(){
     return {
-        editor: ClassicEditor,
         article:{
             title:'',
             details:'',
@@ -94,7 +91,6 @@ export default {
   components:{
       ValidationProvider,
       ValidationObserver,
-      editor: CKEditor.component
   },
   methods:{
     fetchActiveCategories(){
