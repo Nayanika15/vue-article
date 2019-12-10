@@ -83,11 +83,13 @@
         this.articles=data
     },
       fetchArticles(){
+        this.$store.commit('loading', true);
         this.$http.get('article/latest')
 	    		.then( response =>{
 	    			return response.json();
 	    			})
 	    		.then(data => {
+            this.$store.commit('loading', false);              
             if(data['result'].length)
 	    			{
               const resArray = [];

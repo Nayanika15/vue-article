@@ -7,6 +7,7 @@ import { routes } from './routes';
 import "./assets/js/validatorFile";
 import VueSocialauth from 'vue-social-auth'
 import DataTable from 'laravel-vue-datatable';
+import store from './store'
 
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
@@ -46,36 +47,36 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-   if (to.meta.auth) {
-    if (!localStorage.getItem('token'))
-    {
+  if (to.meta.auth) {
+    if (!(store.state.auth.token))
+    { 
       next('/login')
     }
     else 
     {
       Vue.http.interceptors.push((request, next) => {
-      request.headers.set('Authorization', 'Bearer '+localStorage.token)
+      request.headers.set('Authorization', 'Bearer '+store.state.auth.token)
       request.headers.set('Accept', 'application/json')
       });
     }
     return next();
   }
   else if (to.meta.guest) {
-    if (!localStorage.getItem('token'))
+    if (!(store.state.auth.token))
     {
       next()
     }
     else
     {
-      delete localStorage.token;
+      store.state.auth.token='';
       next('/home');
     }
     return next();
   }
   else {
-    if(localStorage.getItem('token')){
+    if(store.state.auth.token){
       Vue.http.interceptors.push((request, next) => {
-      request.headers.set('Authorization', 'Bearer '+localStorage.token)
+      request.headers.set('Authorization', 'Bearer '+store.state.auth.token)
       request.headers.set('Accept', 'application/json')
       });
     }
@@ -85,6 +86,7 @@ router.beforeEach((to, from, next) => {
 
 new Vue({
   el: '#app',
+  store,
   router,
   vuetify: new Vuetify(
     {

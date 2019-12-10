@@ -73,14 +73,23 @@
   </div>
 </template>
 <script>
+import { mapState, mapActions } from 'vuex';
 export default {
     data (){
       return {
         resource : {},
         active_categories : [],
         categories_count : 0,
-        isAuthenticated : localStorage.getItem('token'),
-        isAdmin : localStorage.getItem('isAdmin')
+      }
+    },
+      computed:{
+        isAuthenticated()
+        {
+          return this.$store.state.token;
+        },
+        isAdmin()
+        {
+          return this.$store.state.is_admin;
         }
     },
     created() {

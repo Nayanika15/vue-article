@@ -58,11 +58,13 @@ export default {
     async submit(){
       const valid = await this.$refs.observer.validate();
       if (valid) {
+      this.$store.commit('loading', true);
       this.$http.post('category/add', this.category )
       .then( response =>{
             return response.json();
             })
       .then(data => {
+          this.$store.commit('loading', false);
           const result = data['result'];
           alert(result.msg);
           this.$router.replace({ name: result.route });

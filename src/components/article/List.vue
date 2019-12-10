@@ -65,11 +65,13 @@ export default {
     }
   },
   created() {
+        this.$store.commit('loading', true);
         this.$http.get('article/list')
         .then(response => {
             return response.json();
         })
         .then(data => {
+          this.$store.commit('loading', false);
           this.articles = data;
         })
   },

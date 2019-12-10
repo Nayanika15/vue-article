@@ -54,31 +54,40 @@ export default {
       ValidationObserver
   },
   methods:
-  {
+  {    
     async submit()
     {
       const valid = await this.$refs.observer.validate();
       if (valid) {
+        this.$store.commit('loading', true);
         this.$http.post('login', this.user)
             .then( response =>{
             return response.json();
             })
             .then(data => {
+              this.$store.commit('loading', false);
             const result = data['result'];
-            if (!result.token) 
+            
+            if (result.token) 
+            {
+              this.$store.dispatch('user_auth', {
+                 token: result.token,
+                 is_admin: result.isAdmin
+                 });
+            }
+            else
             {
               this.loginFailed()
               return
             }
-            localStorage.token = result.token;
-            localStorage.isAdmin = result.isadmin;
+            
             this.error = false;
             this.$router.replace({ name:'dashboard' });
             location.reload();
             })
-            .catch(error => {
-              alert('User authenication failed');
-            });
+            .catch( error =>{
+              alert('You are not authorised.');
+            })
       }
       else {
         return false;

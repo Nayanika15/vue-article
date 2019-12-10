@@ -92,11 +92,13 @@ export default {
   },
   methods:{
     fetchActiveCategories(){
+      this.$store.commit('loading', true);
         this.$http.get('category/active')
         .then( response =>{
           return response.json();
           })
         .then(data => {
+          this.$store.commit('loading', false);
             this.categories = data;
             this.categories_count = data.length;         
         });
@@ -104,11 +106,13 @@ export default {
     async submit(){
       const valid = await this.$refs.observer.validate();
       if (valid) {
+      this.$store.commit('loading', true);
       this.$http.post('article/add', this.article)
       .then( response =>{
             return response.json();
             })
       .then(data => {
+        this.$store.commit('loading', false);
           const result = data['result'];
           if(result.errFlag == 0)
           {

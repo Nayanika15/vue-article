@@ -2,6 +2,12 @@
   <div id="app">
     <v-app>
       <div class="wrap">
+        <v-overlay v-if="$store.state.home.is_loading">
+          <v-progress-circular
+          primary
+          indeterminate>
+          </v-progress-circular>
+        </v-overlay>
         <appHeader></appHeader>
         <router-view></router-view>
         <appFooter></appFooter>

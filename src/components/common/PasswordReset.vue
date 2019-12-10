@@ -84,9 +84,9 @@ export default {
   },
   methods:{
     async submit(){
-        alert(1);
       const valid = await this.$refs.observer.validate();
       if (valid) {
+      this.$store.commit('loading', true);
       this.$http.post('reset-password', this.user)
 	    	.then( response =>{
             return response.json();
@@ -94,6 +94,7 @@ export default {
           error => alert(error)
           )
           .then(data => {
+            this.$store.commit('loading', false);
             alert(data.msg);
             this.$router.replace({ name: data.route });
             location.reload();
