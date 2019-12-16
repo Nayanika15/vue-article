@@ -20,6 +20,7 @@ Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.http.options.root= 'http://article.com/api/';
 Vue.config.productionTip = false;
+
 Vue.use(VueSocialauth, {
 
   providers: {
