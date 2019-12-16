@@ -1,5 +1,6 @@
 var path = require('path')
 var webpack = require('webpack')
+const {InjectManifest} = require('workbox-webpack-plugin');
 
 module.exports = {
   entry: './src/main.js',
@@ -75,4 +76,11 @@ if (process.env.NODE_ENV === 'production') {
       minimize: true
     })
   ])
+   // Other webpack config...
+   plugins: [
+    // Other plugins...
+    new InjectManifest({
+      swSrc: './src/sw.js',
+    })
+  ]
 }
