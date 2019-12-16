@@ -101,13 +101,14 @@ export default {
     async submit(){
       const valid = await this.$refs.observer.validate();
       if (valid) {
+      this.$store.commit('loading', true);
       this.$http.post('register', this.user)
       .then( response =>{
         return response.json();
         })
         .then(data => {
+          this.$store.commit('loading', false);
           let res = data.success;
-          console.log(res);
           let token = res.token;
           if(token)
           {

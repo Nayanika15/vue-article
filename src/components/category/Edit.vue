@@ -58,11 +58,13 @@ export default {
     async submit(){
       const valid = await this.$refs.observer.validate();
       if (valid) {
+      this.$store.commit('loading', true);
       this.$http.put('category/update/'+this.$route.params.id, this.category )
       .then( response =>{
             return response.json();
             })
       .then(data => {
+          this.$store.commit('loading', false);
           const result = data['result'];
           alert(result.msg);
           this.$router.replace({ name: result.route });
@@ -77,11 +79,13 @@ export default {
     }    
   },
   created(){
+    this.$store.commit('loading', true);
     this.$http.get('category/edit/' + this.$route.params.id )
       .then( response => {
           return response.json();
       })
       .then( data => {
+        this.$store.commit('loading', false);
          this.category = data;
       })
   }

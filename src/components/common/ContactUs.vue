@@ -94,6 +94,7 @@ export default {
     async submit(){
       const valid = await this.$refs.observer.validate();
       if (valid) {
+      this.$store.commit('loading', true);
       this.$http.post('feedback', this.user)
 	    		.then( response =>{
             return response.json();
@@ -101,6 +102,7 @@ export default {
           error => alert(error)
           )
           .then(data => {
+            this.$store.commit('loading', false);
             alert(data.message);
             this.$router.push({ name: "Home"});
         });	

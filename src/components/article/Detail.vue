@@ -165,11 +165,13 @@ import { ValidationProvider, ValidationObserver } from "vee-validate";
     },
     methods:{
       fetchArticleDetail(path){
+        this.$store.commit('loading', true);
         this.$http.get('article/'+path)
         .then( response =>{
           return response.json();
           })
         .then(data => {
+          this.$store.commit('loading', false);
             const result = data['result'];
             this.article = result['article'];
             this.active_comments = result['active_comments'];
@@ -181,6 +183,7 @@ import { ValidationProvider, ValidationObserver } from "vee-validate";
       async submit(){
       const valid = await this.$refs.observer.validate();
       if (valid) {
+      this.$store.commit('loading', true);
       this.$http.post('comment/add/'+this.article.id, this.user)
 	    		.then( response =>{
             return response.json();
@@ -188,6 +191,7 @@ import { ValidationProvider, ValidationObserver } from "vee-validate";
           error => alert(error)
           )
           .then(data => {
+            this.$store.commit('loading', false);
             alert(data.msg);
             location.reload();
         });	
@@ -198,12 +202,14 @@ import { ValidationProvider, ValidationObserver } from "vee-validate";
     },
     verify(){
       if(this.user.mobile)
-      {
+      { 
+        this.$store.commit('loading', true);
         this.$http.get('verify-mobile/'+this.user.mobile)
           .then( response =>{
           return response.json();
           })
         .then(data => {
+            this.$store.commit('loading', false);
             this.status = data.message;      
         });
       }

@@ -50,12 +50,14 @@ export default {
   methods:{
   deleteCategory(item){
       if(confirm('Are you sure you want to delete this Category?'))
-      {
+      { 
+        this.$store.commit('loading', true);
         this.$http.get('category/delete/'+ item.id)
         .then(response => {
             return response.json();
         })
         .then(data => {
+          this.$store.commit('loading', false);
           let message = data.message;
             alert(message);
             location.reload();
@@ -64,11 +66,13 @@ export default {
     },
   },
   created(){
+    this.$store.commit('loading', true);
     this.$http.get('category/list')
     .then( response => {
       return response.json();
           })
     .then( data =>{
+        this.$store.commit('loading', false);
         this.categories = data['data'];
       });
   }

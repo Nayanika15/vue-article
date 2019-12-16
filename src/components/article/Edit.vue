@@ -134,11 +134,13 @@ export default {
   },
   created(){
     this.fetchActiveCategories();
+    this.$store.commit('loading', true);
     this.$http.get('article/edit/'+ this.$route.params.id)
         .then( response => {
             return response.json();
         })
         .then( data => {
+            this.$store.commit('loading', false);
             let error = data.errFlag;
             if( error == 1)
             {
