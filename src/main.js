@@ -11,6 +11,7 @@ import store from './store'
 
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
+import './registerServiceWorker'
 
 Vue.use(Vuetify)
 Vue.use(DataTable);
@@ -19,6 +20,18 @@ Vue.use(VueRouter);
 Vue.use(VueResource);
 Vue.http.options.root= 'http://article.com/api/';
 Vue.config.productionTip = false;
+
+if('serviceWorker' in navigator)
+{ 
+  console.log('registering sw');
+  try{
+    navigator.serviceWorker.register('/src/service-worker.js');
+      console.log('registered service worker');
+  }
+  catch(err){
+      console.error(err);
+    }
+}
 Vue.use(VueSocialauth, {
 
   providers: {
