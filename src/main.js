@@ -11,6 +11,7 @@ import store from './store'
 
 import Vuetify from 'vuetify'
 import 'vuetify/dist/vuetify.min.css'
+import './registerServiceWorker'
 
 Vue.use(Vuetify)
 Vue.use(DataTable);
