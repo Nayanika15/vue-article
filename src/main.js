@@ -21,19 +21,8 @@ Vue.use(VueResource);
 Vue.http.options.root= 'http://article.com/api/';
 Vue.config.productionTip = false;
 
-if('serviceWorker' in navigator)
-{ 
-  console.log('registering sw');
-  try{
-    navigator.serviceWorker.register('/src/service-worker.js');
-      console.log('registered service worker');
-  }
-  catch(err){
-      console.error(err);
-    }
-}
+//vue social auth
 Vue.use(VueSocialauth, {
-
   providers: {
     google: {
       clientId: '179927047358-2tb2v90kjsclkmukob79p89gfpgmb7d8.apps.googleusercontent.com',
